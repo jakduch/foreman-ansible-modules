@@ -1,0 +1,5 @@
+---
+minor_changes:
+  - registration_command - allow packages to be provided as a list
+    (https://github.com/theforeman/foreman-ansible-modules/issues/1975)
+...

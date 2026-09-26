@@ -80,7 +80,7 @@ options:
     - Packages to install on the host when registered.
     - Multiple packages are to be given as a space delimited string or as a list.
     required: false
-    type: str
+    type: raw
   remote_execution_interface:
     description:
     - Identifier of the Host interface for Remote execution.
@@ -194,6 +194,12 @@ class ForemanRegistrationCommandModule(ForemanAnsibleModule):
     pass
 
 
+def _format_packages(packages):
+    if isinstance(packages, list):
+        return ' '.join(map(str, packages))
+    return packages
+
+
 def main():
     module = ForemanRegistrationCommandModule(
         foreman_spec=dict(
@@ -228,10 +234,8 @@ def main():
         ],
     )
 
-    # Support both list and string input parameter
-    packages = module.foreman_params.get('packages')
-    if isinstance(packages, list):
-        module.foreman_params['packages'] = ' '.join(map(str, packages))
+    if 'packages' in module.foreman_params:
+        module.foreman_params['packages'] = _format_packages(module.foreman_params['packages'])
 
     with module.api_connection():
         module.auto_lookup_entities()
